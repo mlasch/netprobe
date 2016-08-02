@@ -6,10 +6,12 @@ OUT = bin/netprobe
 CC = gcc
 CFLAGS += -Wall -std=gnu11
 
-LDFLAGS += -lpcap -lpthread
+LDFLAGS += -lpcap -lpthread -lcurl
+
+#DEBUG = 1
 
 ifdef DEBUG
-	CFLAGS += -g -O0
+	CFLAGS += -g -O0 -Q -v
 else
 	CFLAGS += -O3
 endif

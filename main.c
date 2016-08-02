@@ -9,15 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <curl/curl.h>
 
 #include "handle_packet.h"
 #include "flow.h"
-
-#define DEV_NAME_LEN 10
-
-struct pcap_arg_t {
-	char dev[DEV_NAME_LEN];
-};
 
 struct flow* insert_ptr = NULL;
 struct flow* collect_ptr = NULL;
@@ -25,15 +20,22 @@ struct flow* collect_ptr = NULL;
 pthread_mutex_t collect_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char* argv[]) {
+
 	pthread_t pcap_id, inserter_id;
 	int ret;
-	struct pcap_arg_t pcap_arg;
+	pcap_arg_t pcap_arg;
+	inserter_arg_t inserter_arg;
 
-	if (argc >= 2) {
+	if (argc >= 5) {
 		strcpy(pcap_arg.dev, argv[1]);
+		strcpy(inserter_arg.path, argv[2]);
+		strcpy(inserter_arg.token, argv[3]);
+		strcpy(inserter_arg.db, argv[4]);
 	} else {
 		fprintf(stderr, "Not enough arguments!\n");
 	}
+
+	inserter_arg.curl_handle = curl_easy_init();
 
 
 	ret = pthread_create(&pcap_id, NULL, &pcap_thread, &pcap_arg);
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]) {
 		fprintf(stderr, "Failed to create pcap_thread\n");
 	}
 
-	ret = pthread_create(&inserter_id, NULL, &inserter_thread, NULL);
+	ret = pthread_create(&inserter_id, NULL, &inserter_thread, &inserter_arg);
 
 	if (ret != 0) {
 		fprintf(stderr, "Failed to create inserter\n");
