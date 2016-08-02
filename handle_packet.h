@@ -11,6 +11,8 @@
 #include <curl/curl.h>
 #include <pcap.h>
 
+#define INSERT_DELAY 5
+
 #define DEV_NAME_LEN 10
 #define PATH_LEN 80
 #define TOKEN_LEN 80

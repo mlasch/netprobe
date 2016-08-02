@@ -212,11 +212,11 @@ void* inserter_thread(void* arg) {
 	char post_buff[80];
 	char url[100];
 
-	sprintf(url, "https://www.localnet.cc/guard/write/%s?db=%s", token, db);
+	sprintf(url, "http://db.2.localnet.cc:8001/write/%s?db=%s", token, db);
 	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
 
 	while(1) {
-		sleep(30);
+		sleep(INSERT_DELAY);
 
 		pthread_mutex_lock(&collect_mutex);
 		insert_ptr = collect_ptr;
