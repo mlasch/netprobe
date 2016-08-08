@@ -1,17 +1,17 @@
 # Makefile for netprobe project
 
 OBJS = main.o handle_packet.o flow.o
-OUT = bin/netprobe
+
+OUTDIR = bin
+OUT = $(OUTDIR)/netprobe
 
 CC = gcc
 CFLAGS += -Wall -std=gnu11
 
 LDFLAGS += -lpcap -lpthread -lcurl
 
-#DEBUG = 1
-
 ifdef DEBUG
-	CFLAGS += -g -O0 -Q -v
+	CFLAGS += -g -O0 -fsanitize=address -fno-omit-frame-pointer -DDEBUG
 else
 	CFLAGS += -O3
 endif
@@ -19,7 +19,8 @@ endif
 all: build
 
 build:	$(OBJS)
+	mkdir -p bin/
 	$(CC) $(CFLAGS) $(OBJS) -o $(OUT) $(LDFLAGS)
 	
 clean:
-	rm -rf $(OBJS) $(OUT)
+	rm -rf $(OBJS) $(OUTDIR)

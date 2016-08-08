@@ -11,24 +11,16 @@
 #include <curl/curl.h>
 #include <pcap.h>
 
-#define INSERT_DELAY 5
+#include "main.h"
 
-#define DEV_NAME_LEN 10
-#define PATH_LEN 80
-#define TOKEN_LEN 80
+#ifdef DEBUG
+	#define INSERT_DELAY 5
+#else
+	#define INSERT_DELAY 30
+#endif
 
-typedef struct {
-	char dev[DEV_NAME_LEN];
-} pcap_arg_t;
-
-typedef struct {
-	CURL* curl_handle;
-	char path[PATH_LEN];
-	char token[80];
-	char db[80];
-} inserter_arg_t;
-
-extern pthread_mutex_t collect_mutex;
+#define MAX_PARAM_LENGTH MAX_OPTION_LENGTH
+#define MAX_PATH_LENGTH MAX_OPTION_LENGTH
 
 void handle_packet(u_char *args, const struct pcap_pkthdr *header,
 	    const u_char *packet);

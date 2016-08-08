@@ -22,12 +22,17 @@
 
 #include "handle_packet.h"
 #include "flow.h"
+#include "main.h"
 
-#define NUM_NETS 8
+#define NUM_NETS 9
 
 
 //TODO add link local and non routeable ipv6 addresses
 const char* local_nets[NUM_NETS][2] = {
+		{	/* wan address */
+				"::ffff:82.139.196.221",
+				"::ffff:255.255.255.255"
+		},
 		{	/* 10.0.0.0/8 */
 				"::ffff:10.0.0.0",
 				"::ffff:255.0.0.0"
@@ -123,7 +128,7 @@ void handle_packet(u_char *args, const struct pcap_pkthdr *pcap_header,
 		dst = ip6_header->ip6_dst;
 
 	} else {
-		//printf("Non IP packet received!\n");
+		/* Non IP packet received -> will not be routed */
 		return;
 	}
 
@@ -159,7 +164,7 @@ void handle_packet(u_char *args, const struct pcap_pkthdr *pcap_header,
 
 void* pcap_thread(void* arg) {
 	char* filter;
-	char* dev = (char*) ((pcap_arg_t*)arg)->dev;
+	char* dev = ((pcap_arg_t*)arg)->dev;
 
 	char errbuf[PCAP_ERRBUF_SIZE];
 	struct bpf_program fexp;
@@ -205,15 +210,9 @@ void* pcap_thread(void* arg) {
 }
 
 void* inserter_thread(void* arg) {
-	char* path = (char*) ((inserter_arg_t*)arg)->path;
-	char* token = (char*) ((inserter_arg_t*)arg)->token;
-	char* db = (char*) ((inserter_arg_t*)arg)->db;
 	CURL* curl_handle = (CURL*) ((inserter_arg_t*)arg)->curl_handle;
-	char post_buff[80];
-	char url[100];
 
-	sprintf(url, "http://db.2.localnet.cc:8001/write/%s?db=%s", token, db);
-	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+	curl_easy_setopt(curl_handle, CURLOPT_URL, ((inserter_arg_t*) arg)->url);
 
 	while(1) {
 		sleep(INSERT_DELAY);
@@ -223,27 +222,37 @@ void* inserter_thread(void* arg) {
 		collect_ptr = NULL;
 		pthread_mutex_unlock(&collect_mutex);
 
-		printf("---------\n");
+		if (verbose_flag) {
+			printf("---------\n");
+		}
 
 		struct flow* iter = insert_ptr;
 
 		while (iter) {
-			char data[200];
-			data[0] = '\0';
-			strcat(data, path);
-			flow_to_post(iter, post_buff);
-			strcat(data, post_buff);
+			char param[MAX_PARAM_LENGTH] = {0};
+			char data[MAX_PARAM_LENGTH+MAX_PATH_LENGTH] = {0};
+
+			strcat(data, ((inserter_arg_t*)arg)->path);
+			flow_to_post(iter, param);
+			strcat(data, param);
 
 			curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, data);
-			CURLcode curl_code = curl_easy_perform(curl_handle);
 
-			if (curl_code) {
-				printf("CURL error code: %d\n", curl_code);
+			if (nop_flag) {
+				CURLcode curl_code = curl_easy_perform(curl_handle);
+
+				if (curl_code) {
+					printf("CURL error: %s\n", curl_easy_strerror(curl_code));
+				}
 			}
 
-			print_flow(iter);
+			if (verbose_flag) {
+				print_flow(iter);
+			}
+
 			iter = iter->next_flow;
 		}
+
 		free_flows(insert_ptr);
 	}
 

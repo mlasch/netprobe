@@ -17,6 +17,7 @@
 static char* proto_to_str(uint8_t proto, char* buf) {
 	switch(proto) {
 		case IPPROTO_ICMP:
+		case IPPROTO_ICMPV6:
 			strcpy(buf, "ICMP");
 			break;
 
@@ -74,12 +75,6 @@ void add_dataset_to_flow(struct flow **ptr, traf_dir dir, uint8_t mac[6], struct
 	meta.proto = proto;
 
 	while (iter != NULL) {
-		//size_t s = sizeof(struct pkt_meta);
-		//printf("meta struct size: %d %d\n",(int)s,(int)sizeof(traf_dir));
-		//uint32_t diff = memcmp(&(iter->meta), &meta, s);
-		//bool diff = metacmp(&(iter->meta), &meta);
-		//printf("compare result: %d\n",diff);
-		//if (diff == 0) {
 		if (metacmp(&(iter->meta), &meta)) {
 			/* increase counters */
 			iter->size += size;
@@ -93,9 +88,7 @@ void add_dataset_to_flow(struct flow **ptr, traf_dir dir, uint8_t mac[6], struct
 
 	struct flow* new_ptr = malloc(sizeof(struct flow));
 
-	//memcpy(&new_ptr->meta,&meta,sizeof(struct pkt_meta));
-	new_ptr->meta = meta;
-	//printf("%p %p\n", &new_ptr->meta, &(new_ptr->meta));
+	memcpy(&new_ptr->meta,&meta,sizeof(struct pkt_meta));
 
 	new_ptr->size = size;
 	new_ptr->packets = 1;
