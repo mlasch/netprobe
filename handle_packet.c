@@ -238,7 +238,7 @@ void* inserter_thread(void* arg) {
 
 			curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, data);
 
-			if (nop_flag) {
+			if (!nop_flag) {
 				CURLcode curl_code = curl_easy_perform(curl_handle);
 
 				if (curl_code) {
