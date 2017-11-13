@@ -123,7 +123,7 @@ void flow_to_post(struct flow *f_ptr, char* buf) {
 	char proto_buf[20];
 	char ip_buf[INET6_ADDRSTRLEN];
 
-	sprintf(buf, " mac=\"%02x:%02x:%02x:%02x:%02x:%02x\",dir=\"%s\",ip=\"%s\",proto=\"%s\",size=%d,packets=%d",
+	sprintf(buf, ",mac=%02x:%02x:%02x:%02x:%02x:%02x,dir=%s,ip=%s,proto=%s bytes=%d,packets=%d",
 			ptr->meta.mac[0],
 			ptr->meta.mac[1],
 			ptr->meta.mac[2],

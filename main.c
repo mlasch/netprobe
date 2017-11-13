@@ -40,7 +40,8 @@ void print_usage() {
 
 int main(int argc, char* argv[]) {
 	bool interface = 1, url = 1, path = 1;
-	pcap_arg_t pcap_arg; inserter_arg_t inserter_arg;
+	pcap_arg_t pcap_arg;
+    inserter_arg_t inserter_arg;
 
 	static struct option long_options[] = {
 		/* flags */
