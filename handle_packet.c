@@ -20,6 +20,7 @@
 #include <netinet/ip6.h>
 #include <arpa/inet.h>
 
+#include "globals.h"
 #include "handle_packet.h"
 #include "flow.h"
 #include "main.h"
@@ -67,9 +68,10 @@ const char* local_nets[NUM_NETS][2] = {
 		}
 };
 
-static bool check_local(struct in6_addr* addr) {
+bool check_local(struct in6_addr* addr) {
 	struct in6_addr temp;
-	bool is_local = false;
+
+	char str[INET6_ADDRSTRLEN];
 
 	for(int i=0;i<NUM_NETS;i++) {
 		struct in6_addr network, prefix;
@@ -84,12 +86,13 @@ static bool check_local(struct in6_addr* addr) {
 		}
 
 		if (memcmp(&temp, &network, sizeof(struct in6_addr)) == 0) {
-			is_local = true;
-			break;
+			inet_ntop(AF_INET6, addr, str, INET6_ADDRSTRLEN);
+			
+			return true;
 		}
 	}
-
-	return is_local;
+	
+	return false;
 }
 
 void handle_packet(u_char *args, const struct pcap_pkthdr *pcap_header,
@@ -239,11 +242,13 @@ void* inserter_thread(void* arg) {
 			curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, data);
 
 			if (!nop_flag) {
-                printf("INSERT!\n");
+                
 				CURLcode curl_code = curl_easy_perform(curl_handle);
 
 				if (curl_code) {
-					printf("CURL error: %s\n", curl_easy_strerror(curl_code));
+					fprintf(stderr, "CURL error: %s\n", curl_easy_strerror(curl_code));
+				} else {
+					printf("inserted\n");
 				}
 			}
 

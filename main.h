@@ -24,7 +24,5 @@ typedef struct {
 	char* path;
 } inserter_arg_t;
 
-extern pthread_mutex_t collect_mutex;
-extern int verbose_flag, nop_flag;
 
 #endif /* MAIN_H_ */

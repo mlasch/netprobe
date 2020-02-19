@@ -1,6 +1,11 @@
 # Makefile for netprobe project
 
-OBJS = main.o handle_packet.o flow.o
+OBJS = main.o handle_packet.o flow.o globals.o
+OBJS_TEST = $(filter-out main.o, $(OBJS))
+
+TEST_SRCS = $(wildcard test/*.c)
+TEST_OBJS = $(TEST_SRCS:.c=.o)
+TEST_BIN = $(patsubst test/%,bin/test/%,$(TEST_SRCS:.c=))
 
 OUTDIR = bin
 OUT = $(OUTDIR)/netprobe
@@ -24,3 +29,13 @@ build:	$(OBJS)
 	
 clean:
 	rm -rf $(OBJS) $(OUTDIR)
+
+test: $(TEST_BIN)
+	@for var in $(TEST_BIN); do \
+		echo "Running $$var"; \
+		$$var || exit 1; \
+	done
+
+bin/test/%: $(OBJS_TEST) $(TEST_OBJS)
+	mkdir -p bin/test/
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@

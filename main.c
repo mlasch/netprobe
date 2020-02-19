@@ -17,12 +17,7 @@
 #include "main.h"
 #include "handle_packet.h"
 #include "flow.h"
-
-/* globals */
-struct flow* insert_ptr = NULL;
-struct flow* collect_ptr = NULL;
-pthread_mutex_t collect_mutex = PTHREAD_MUTEX_INITIALIZER;
-int verbose_flag = 0, nop_flag = 0;
+#include "globals.h"
 
 void print_usage() {
 	printf(
@@ -104,7 +99,7 @@ int main(int argc, char* argv[]) {
 	if (ret != 0) {
 		fprintf(stderr, "Failed to create inserter thread\n");
 	}
-
+	
 	pthread_join(pcap_id, NULL);
 	pthread_join(inserter_id, NULL);
 

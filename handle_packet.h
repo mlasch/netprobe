@@ -22,8 +22,10 @@
 #define MAX_PARAM_LENGTH MAX_OPTION_LENGTH
 #define MAX_PATH_LENGTH MAX_OPTION_LENGTH
 
+bool check_local(struct in6_addr* addr);
 void handle_packet(u_char *args, const struct pcap_pkthdr *header,
 	    const u_char *packet);
+
 void* pcap_thread(void* arg);
 void* inserter_thread(void* arg);
 #endif /* HANDLE_PACKET_H_ */
