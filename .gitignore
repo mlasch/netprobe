@@ -1,7 +1,9 @@
 .cproject
 .project
 .settings/
+.vscode
 
 bin/
+
 
 *.o
