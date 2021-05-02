@@ -205,7 +205,7 @@ _Noreturn void *inserter_thread(void *arg) {
             char param[MAX_PARAM_LENGTH] = {0};
             char data[MAX_PARAM_LENGTH + MAX_PATH_LENGTH] = {0};
 
-            strcat(data, ((inserter_arg_t *)arg)->path);
+            strcat(data, ((inserter_arg_t *)arg)->measurement);
             flow_to_post(iter, param);
             strcat(data, param);
 

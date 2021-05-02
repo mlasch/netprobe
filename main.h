@@ -21,7 +21,7 @@ typedef struct {
 typedef struct {
     CURL *curl_handle;
     char *url;
-    char *path;
+    char *measurement;
 } inserter_arg_t;
 
 #endif /* MAIN_H_ */

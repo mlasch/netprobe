@@ -24,7 +24,7 @@ void print_usage() {
            "Usage:\n"
            "\t-i, --interface\t\tNetwork interface\n"
            "\t-u, --url\t\tURL containing server, port, database and token\n"
-           "\t-p, --path\t\tPath\n"
+           "\t-m, --measurement\tMeasurement Name\n"
            "\t    --nop\t\tNo actual insert (no operation)\n"
            "\t    --verbose\n"
            "\t    --version\t\tPrint program version\n",
@@ -42,11 +42,11 @@ int main(int argc, char *argv[]) {
                                            /* arguments */
                                            {"interface", required_argument, NULL, 'i'},
                                            {"url", required_argument, NULL, 'u'},
-                                           {"path", required_argument, NULL, 'p'},
-                                           {"version", required_argument, NULL, 'v'},
+                                           {"measurement", required_argument, NULL, 'p'},
+                                           {"version", no_argument, NULL, 'v'},
                                            {NULL, 0, NULL, 0}};
 
-    for (int option_index = 0, c = 0; c != -1; c = getopt_long(argc, argv, "i:u:p:v", long_options, &option_index)) {
+    for (int option_index = 0, c = 0; c != -1; c = getopt_long(argc, argv, "i:u:m:v", long_options, &option_index)) {
 
         switch (c) {
         case 'i':
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
             inserter_arg.url = optarg;
             url = 0;
             break;
-        case 'p':
-            inserter_arg.path = optarg;
+        case 'm':
+            inserter_arg.measurement = optarg;
             path = 0;
             break;
         case 'v':
