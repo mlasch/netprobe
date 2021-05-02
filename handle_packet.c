@@ -183,9 +183,8 @@ void *pcap_thread(void *arg) {
     pthread_exit((void *)NULL);
 }
 
-void *inserter_thread(void *arg) {
+_Noreturn void *inserter_thread(void *arg) {
     CURL *curl_handle = (CURL *)((inserter_arg_t *)arg)->curl_handle;
-
     curl_easy_setopt(curl_handle, CURLOPT_URL, ((inserter_arg_t *)arg)->url);
 
     while (1) {

@@ -12,32 +12,13 @@
 #include <string.h>
 
 #include "flow.h"
+#include <netdb.h>
 #include <netinet/in.h>
 
-static char *proto_to_str(uint8_t proto, char *buf) {
-    switch (proto) {
-    case IPPROTO_ICMP:
-    case IPPROTO_ICMPV6:
-        strcpy(buf, "ICMP");
-        break;
-
-    case IPPROTO_TCP:
-        strcpy(buf, "TCP");
-        break;
-
-    case IPPROTO_UDP:
-        strcpy(buf, "UDP");
-        break;
-
-    case IPPROTO_IPV6:
-        strcpy(buf, "IPV6_HEADER");
-        break;
-
-    default:
-        strcpy(buf, "OTHER");
-    }
-
-    return buf;
+static char *proto_to_str(uint8_t proto_num, char *buf) {
+    struct protoent *proto;
+    proto = getprotobynumber(proto_num);
+    return proto->p_name;
 }
 
 static char *dir_to_str(traf_dir dir, char *buf) {
@@ -110,6 +91,9 @@ void add_dataset_to_flow(struct flow **ptr, traf_dir dir, uint8_t mac[6], struct
 
 void print_flow(struct flow *ptr) {
     char buf[INET6_ADDRSTRLEN];
+    char dir_buf[MAX_DIR_STR_LEN];
+    char proto_buf[MAX_PROTO_STR_LEN];
+
     printf("FLOW: ");
     printf("mac=%02x:%02x:%02x:%02x:%02x:%02x, ", ptr->meta.mac[0], ptr->meta.mac[1], ptr->meta.mac[2],
            ptr->meta.mac[3], ptr->meta.mac[4], ptr->meta.mac[5]);
@@ -117,14 +101,15 @@ void print_flow(struct flow *ptr) {
     inet_ntop(AF_INET6, &ptr->meta.ip_addr, buf, INET6_ADDRSTRLEN);
     printf("ip=%s, ", buf);
 
-    printf("dir=0x%x, proto=0x%x %dbytes, %dpkts\n", ptr->meta.dir, ptr->meta.proto, ptr->size, ptr->packets);
+    printf("dir=%s, proto=%s %dbytes, %dpkts\n", dir_to_str(ptr->meta.dir, dir_buf),
+           proto_to_str(ptr->meta.proto, proto_buf), ptr->size, ptr->packets);
     ptr = ptr->next_flow;
 }
 
 void flow_to_post(struct flow *f_ptr, char *buf) {
     struct flow *ptr = f_ptr;
-    char dir_buf[4];
-    char proto_buf[20];
+    char dir_buf[MAX_DIR_STR_LEN];
+    char proto_buf[MAX_PROTO_STR_LEN];
     char ip_buf[INET6_ADDRSTRLEN];
 
     sprintf(buf, ",mac=%02x:%02x:%02x:%02x:%02x:%02x,dir=%s,ip=%s,proto=%s bytes=%d,packets=%d", ptr->meta.mac[0],

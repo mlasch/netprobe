@@ -12,6 +12,9 @@
 #include <netinet/ip6.h>
 #include <stdint.h>
 
+#define MAX_DIR_STR_LEN 4
+#define MAX_PROTO_STR_LEN 20
+
 typedef enum { IN, OUT } traf_dir;
 
 struct pkt_meta {

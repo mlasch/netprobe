@@ -26,5 +26,6 @@ bool check_local(struct in6_addr *addr);
 void handle_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 
 void *pcap_thread(void *arg);
-void *inserter_thread(void *arg);
+
+_Noreturn void *inserter_thread(void *arg);
 #endif /* HANDLE_PACKET_H_ */

@@ -95,6 +95,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Failed to create inserter thread\n");
     }
 
+    printf("Started, waiting for threads to end\n");
+
     pthread_join(pcap_id, NULL);
     pthread_join(inserter_id, NULL);
 
