@@ -15,14 +15,13 @@
 #define MAX_OPTION_LENGTH 255
 
 typedef struct {
-	char* dev;
+    char *dev;
 } pcap_arg_t;
 
 typedef struct {
-	CURL* curl_handle;
-	char* url;
-	char* path;
+    CURL *curl_handle;
+    char *url;
+    char *path;
 } inserter_arg_t;
-
 
 #endif /* MAIN_H_ */
