@@ -18,6 +18,7 @@
 #include "globals.h"
 #include "handle_packet.h"
 #include "main.h"
+#include "logging.h"
 
 void print_usage() {
     printf("netprobe %s ( https://github.com/mlasch/netprobe )\n"
@@ -86,16 +87,16 @@ int main(int argc, char *argv[]) {
     ret = pthread_create(&pcap_id, NULL, &pcap_thread, &pcap_arg);
 
     if (ret != 0) {
-        fprintf(stderr, "Failed to create pcap thread\n");
+        LOG_ERR("Failed to create pcap thread");
     }
 
     ret = pthread_create(&inserter_id, NULL, &inserter_thread, &inserter_arg);
 
     if (ret != 0) {
-        fprintf(stderr, "Failed to create inserter thread\n");
+        LOG_ERR("Failed to create inserter thread");
     }
 
-    printf("Started, waiting for threads to end\n");
+    LOG_INF("Started, processing packets from %s", pcap_arg.dev);
 
     pthread_join(pcap_id, NULL);
     pthread_join(inserter_id, NULL);

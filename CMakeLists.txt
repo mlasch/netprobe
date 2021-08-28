@@ -7,6 +7,7 @@ add_executable(${PROJECT_NAME}
     handle_packet.c
     flow.c
     globals.c
+    logging.c
 )
 
 target_link_libraries(${PROJECT_NAME}

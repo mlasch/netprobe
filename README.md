@@ -6,8 +6,8 @@ be analyzed by IP version, transport protocol and direction. Destination address
 are not stored to protect user privacy.
 
 Traffic statistics can be filtered by
- * src. MAC address
- * src. IPv4/IPv6
+ * source MAC address
+ * source IPv4/IPv6
  * transport protocol, see protocols(5)
  * flow direction in/out
 
@@ -16,7 +16,7 @@ Traffic statistics can be filtered by
 To run it with user permission `cap_net_raw` needs to be set.
 
 ```
-$ sudo setcap cap_net_raw=ep netprobe`
+$ sudo setcap cap_net_raw=ep netprobe
 ```
 
 ```

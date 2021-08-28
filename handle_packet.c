@@ -24,6 +24,7 @@
 #include "globals.h"
 #include "handle_packet.h"
 #include "main.h"
+#include "logging.h"
 
 #define NUM_NETS 9
 
@@ -146,7 +147,7 @@ void *pcap_thread(void *arg) {
     bpf_u_int32 net;
 
     if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
-        fprintf(stderr, "Can't get netmask for device %s\n", dev);
+        LOG_ERR("Can't get netmask for device %s", dev);
         net = 0;
         mask = 0;
     }
@@ -154,24 +155,24 @@ void *pcap_thread(void *arg) {
     pcap_t *handle = pcap_open_live(dev, BUFSIZ, 0, 1, errbuf);
 
     if (handle == NULL) {
-        fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
+        LOG_ERR("Couldn't open device %s: %s", dev, errbuf);
         pthread_exit((void *)NULL);
     }
 
     if (pcap_datalink(handle) != DLT_EN10MB) {
-        fprintf(stderr, "%s is not an Ethernet device\n", dev);
+        LOG_ERR("%s is not an Ethernet device", dev);
         pthread_exit((void *)NULL);
     }
 
     filter = "";
 
     if (pcap_compile(handle, &fexp, filter, 0, net)) {
-        fprintf(stderr, "Couldn't parse filter %s: %s\n", filter, pcap_geterr(handle));
+        LOG_ERR("Couldn't parse filter %s: %s", filter, pcap_geterr(handle));
         pthread_exit((void *)NULL);
     }
 
     if (pcap_setfilter(handle, &fexp) == -1) {
-        fprintf(stderr, "Couldn't install filter %s: %s\n", filter, pcap_geterr(handle));
+        LOG_ERR("Couldn't install filter %s: %s", filter, pcap_geterr(handle));
         pthread_exit((void *)NULL);
     }
 
@@ -216,9 +217,9 @@ _Noreturn void *inserter_thread(void *arg) {
                 CURLcode curl_code = curl_easy_perform(curl_handle);
 
                 if (curl_code) {
-                    fprintf(stderr, "CURL error: %s\n", curl_easy_strerror(curl_code));
+                    LOG_ERR("CURL error: %s\n", curl_easy_strerror(curl_code));
                 } else {
-                    printf("inserted\n");
+                    LOG_INF("inserted");
                 }
             }
 
