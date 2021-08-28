@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
                                            /* arguments */
                                            {"interface", required_argument, NULL, 'i'},
                                            {"url", required_argument, NULL, 'u'},
-                                           {"measurement", required_argument, NULL, 'p'},
+                                           {"measurement", required_argument, NULL, 'm'},
                                            {"version", no_argument, NULL, 'v'},
                                            {NULL, 0, NULL, 0}};
 

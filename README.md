@@ -31,7 +31,7 @@ Usage:
 ```
 
 ```
-./netprobe -i eth0 -u http://localhost:5000/write/<token> -p bla
+./netprobe -i eth0 -u http://localhost:5000/write/<token> -m bla
 ```
 
 ## build
