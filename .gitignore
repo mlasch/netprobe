@@ -5,6 +5,7 @@
 .idea
 cmake-*
 venv*
+__pycache__
 
 bin/
 
